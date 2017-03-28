@@ -43,7 +43,11 @@ class RecommenderSystem
      */
     function __construct(string $env, string $client_id, string $client_secret)
     {
-        $this->api = new API($env, Config::api_version, $client_id, $client_secret);
+        // Get the API version based on the environment name.
+        $func = __NAMESPACE__ . '\Config::' . $env . 'Version';
+        $apiVersion = call_user_func($func);
+
+        $this->api = new API($env, $apiVersion, $client_id, $client_secret);
         $this->oauth2Client = new OAuth2Client($client_id, $client_secret);
     }
 
@@ -56,6 +60,7 @@ class RecommenderSystem
      *          'sort_similarity'   =>  (integer) ascending = 1, descending = -1. Optional.
      *          'limit'             =>  (integer) max number of results. Optional.
      *      ]
+     *
      * @return mixed $result
      *      $result = [
      *          'status'    =>  (integer) HTTP status. Always returned.
@@ -66,7 +71,8 @@ class RecommenderSystem
      *          ]
      *      ]
      */
-    public function getMatches(string $profile, array $data = NULL) {
+    public function getMatches(string $profile, array $data = NULL)
+    {
         if (! $this->isTokenValid())
             $this->refreshToken();
 
@@ -86,7 +92,8 @@ class RecommenderSystem
      *          ]
      *      ]
      */
-    public function getStatements() {
+    public function getStatements()
+    {
         if (! $this->isTokenValid())
             $this->refreshToken();
 
@@ -103,6 +110,7 @@ class RecommenderSystem
      *      $data = [
      *          'tags' => (array) Tags to filter by. Optional.
      *      ]
+     *
      * @return mixed $result
      *      $result = [
      *          'status'    =>  (integer) HTTP status. Always returned.
@@ -112,7 +120,8 @@ class RecommenderSystem
      *          ]
      *      ]
      */
-    public function getInactionStatement(string $profile, array $data = NULL) {
+    public function getInactionStatement(string $profile, array $data = NULL)
+    {
         if (! $this->isTokenValid())
             $this->refreshToken();
 
@@ -129,6 +138,7 @@ class RecommenderSystem
      *          'statement' =>  (string) Recommender system statement id. Required.
      *          'reaction'  =>  (integer) User reaction to statement [1,5]. Required.
      *      ]
+     *
      * @return mixed $result
      *      $result = [
      *          'status'    =>  (integer) HTTP status. Always returned.
@@ -137,7 +147,8 @@ class RecommenderSystem
      *          ]
      *      ]
      */
-    public function postReaction(array $reaction) {
+    public function postReaction(array $reaction)
+    {
         if (! $this->isTokenValid())
             $this->refreshToken();
 
@@ -149,6 +160,7 @@ class RecommenderSystem
      * Get all reactions in the recommender system.
      *
      * @param string $profile Recommender system profile id.
+     *
      * @return mixed $result
      *      $result = [
      *          'status'    =>  (integer) HTTP status. Always returned.
@@ -158,7 +170,8 @@ class RecommenderSystem
      *          ]
      *      ]
      */
-    public function getReactions(string $profile) {
+    public function getReactions(string $profile)
+    {
         if (! $this->isTokenValid())
             $this->refreshToken();
 
@@ -170,6 +183,7 @@ class RecommenderSystem
      * Get a reaction from the recommender system.
      *
      * @param string $reaction Recommender system reaction id.
+     *
      * @return mixed $result
      *      $result = [
      *          'status'    =>  (integer) HTTP status. Always returned.
@@ -181,7 +195,8 @@ class RecommenderSystem
      *          ]
      *      ]
      */
-    public function getReaction(string $reaction) {
+    public function getReaction(string $reaction)
+    {
         if (! $this->isTokenValid())
             $this->refreshToken();
 
@@ -194,6 +209,7 @@ class RecommenderSystem
      *
      * @param string $reaction Recommender system reaction id.
      * @param array $data The fields to be updated together with the new values.
+     *
      * @return mixed $result
      *      $result = [
      *          'status'    =>  (integer) HTTP status. Always returned.
@@ -202,7 +218,8 @@ class RecommenderSystem
      *          ]
      *      ]
      */
-    public function putReaction(string $reaction, array $data) {
+    public function putReaction(string $reaction, array $data)
+    {
         if (! $this->isTokenValid())
             $this->refreshToken();
 
@@ -214,6 +231,7 @@ class RecommenderSystem
      * Delete a reaction from the recommender system.
      *
      * @param string $reaction Recommender system reaction id.
+     *
      * @return mixed $result
      *      $result = [
      *          'status'    =>  (integer) HTTP status. Always returned.
@@ -222,7 +240,8 @@ class RecommenderSystem
      *          ]
      *      ]
      */
-    public function deleteReaction(string $reaction) {
+    public function deleteReaction(string $reaction)
+    {
         if (! $this->isTokenValid())
             $this->refreshToken();
 
@@ -242,7 +261,8 @@ class RecommenderSystem
      *          ]
      *      ]
      */
-    public function getProfiles() {
+    public function getProfiles()
+    {
         if (! $this->isTokenValid())
             $this->refreshToken();
 
@@ -255,6 +275,7 @@ class RecommenderSystem
      * generated by the recommender system.
      *
      * @param string $profile Recommender system profile id.
+     *
      * @return mixed $result
      *      $result = [
      *          'status'    =>  (integer) HTTP status. Always returned.
@@ -264,7 +285,8 @@ class RecommenderSystem
      *          ]
      *      ]
      */
-    public function getProfile(string $profile) {
+    public function getProfile(string $profile)
+    {
         if (! $this->isTokenValid())
             $this->refreshToken();
 
@@ -279,6 +301,7 @@ class RecommenderSystem
      *      $profile = [
      *          'external_id' => (string) Local id of the profile.
      *      ]
+     *
      * @return mixed $result
      *      $result = [
      *          'status'    =>  (integer) HTTP status. Always returned.
@@ -287,7 +310,8 @@ class RecommenderSystem
      *          ]
      *      ]
      */
-    public function postProfile(array $profile) {
+    public function postProfile(array $profile)
+    {
         if (! $this->isTokenValid())
             $this->refreshToken();
 
@@ -298,18 +322,19 @@ class RecommenderSystem
     /**
      * Update an existing profile in the recommender system.
      *
-     * @param string $profile The id that was assigned to the profile by the
-     *      recommender system.
+     * @param string $profile Recommender system profile id.
      * @param array $data The fields to be updated together with the new values.
+     *
      * @return mixed $result
      *      $result = [
      *          'status'    =>  (integer) HTTP status. Always returned.
-     *          'result'    =>  [ (array) . Returned on success.
+     *          'result'    =>  [ (array) Result of action. Returned on success.
      *              'updated_id'    ->  (string) Recommender system profile id.
      *          ]
      *      ]
      */
-    public function putProfile(string $profile, array $data) {
+    public function putProfile(string $profile, array $data)
+    {
         if (! $this->isTokenValid())
             $this->refreshToken();
 
@@ -320,17 +345,18 @@ class RecommenderSystem
     /**
      * Delete a profile from the recommender system.
      *
-     * @param string $profile The id that was assigned to the profile by the
-     *      recommender system.
+     * @param string $profile Recommender system profile id.
+     *
      * @return mixed $result
      *      $result = [
      *          'status'    =>  (integer) HTTP status. Always returned.
-     *          'result'    =>  [ (array) . Returned on success.
+     *          'result'    =>  [ (array) Result of action. Returned on success.
      *              'deleted_id'    -> (string) Recommender system profile id.
      *          ]
      *      ]
      */
-    public function deleteProfile(string $profile) {
+    public function deleteProfile(string $profile)
+    {
         if (! $this->isTokenValid())
             $this->refreshToken();
 
@@ -344,7 +370,8 @@ class RecommenderSystem
      *
      * @return string Format: '{token_type} {access_token}'
      */
-    private function getAuthString() {
+    private function getAuthString()
+    {
         return $this->token->getTokenType() .' ' . $this->token->getAccessToken();
     }
 
@@ -354,7 +381,8 @@ class RecommenderSystem
      *
      * @return bool
      */
-    private function isTokenValid() {
+    private function isTokenValid()
+    {
         if (! $this->token)
             return FALSE;
 
@@ -366,10 +394,11 @@ class RecommenderSystem
      *
      * @return void
      */
-    private function refreshToken() {
+    private function refreshToken()
+    {
         $this->token = $this->oauth2Client->fetchToken(
             $this->api->getTokenURL(),
-            Config::grant_type
+            Config::$grant_type
         );
     }
 }

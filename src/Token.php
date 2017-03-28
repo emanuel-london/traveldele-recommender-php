@@ -1,32 +1,45 @@
 <?php
+/**
+ * Token.php
+ */
 
 namespace Kooyara\RecommenderSystem;
 
-class Token {
+/**
+ * Class Token
+ * @package Kooyara\RecommenderSystem
+ */
+class Token
+{
 
     /**
-     * @var
+     * @var string
      */
     private $access_token;
+
     /**
-     * @var
+     * @var int
      */
     private $expires_in;
+
     /**
      * @var int
      */
     private $expires_at;
+
     /**
-     * @var
+     * @var string
      */
     private $scope;
+
     /**
-     * @var
+     * @var string
      */
     private $token_type;
 
     /**
      * Token constructor.
+     *
      * @param \stdClass $token_data
      */
     function __construct(\stdClass $token_data)
@@ -39,7 +52,7 @@ class Token {
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getAccessToken()
     {
@@ -47,7 +60,7 @@ class Token {
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getExpiresIn()
     {
@@ -63,7 +76,7 @@ class Token {
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getScope()
     {
@@ -71,7 +84,7 @@ class Token {
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTokenType()
     {

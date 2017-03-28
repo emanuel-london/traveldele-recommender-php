@@ -5,32 +5,52 @@ use Kooyara\RecommenderSystem\API;
 use Kooyara\RecommenderSystem\Config;
 use Kooyara\RecommenderSystem\OAuth2Client;
 
+/**
+ * Class APITest
+ */
 class APITest extends TestCase {
 
+    /**
+     * @var OAuth2Client
+     */
     protected $oauth_client;
+
+    /**
+     * @var API
+     */
     protected $api;
+
+    /**
+     * @var \Kooyara\RecommenderSystem\Token
+     */
     protected $token;
+
+    /**
+     * @var string
+     */
     protected $auth_string;
 
-    protected $posted_profiles = array();
-
+    /**
+     * Reset test utils before every test run.
+     * @return void
+     */
     protected function setUp()
     {
         $this->oauth_client = new OAuth2Client(
-            Config::test_client_id,
-            Config::test_client_secret
+            Config::testingClientId(),
+            Config::testingClientSecret()
         );
 
         $this->api= new API(
             'testing',
             '1.0',
-            Config::test_client_id,
-            Config::test_client_secret
+            Config::testingClientId(),
+            Config::testingClientSecret()
         );
 
         $this->token = $this->oauth_client->fetchToken(
             $this->api->getTokenURL(),
-            Config::grant_type
+            Config::$grant_type
         );
 
         $this->auth_string = $this->token->getTokenType() .
@@ -38,25 +58,31 @@ class APITest extends TestCase {
     }
 
 
+    /**
+     * @return void
+     */
     public  function testInit() {
         $api = new API(
             'testing',
             '1.0',
-            Config::test_client_id,
-            Config::test_client_secret
+            Config::testingClientId(),
+            Config::testingClientSecret()
         );
 
         $baseURL = sprintf(
             "%s://%s/",
-            Config::test_protocol,
-            Config::test_host
+            Config::testingProtocol(),
+            Config::testingHost()
         );
 
-        $tokenURL = $baseURL . Config::access_token_url;
+        $tokenURL = $baseURL . Config::$access_token_url;
 
         $this->assertEquals($api->getTokenURL(), $tokenURL);
     }
 
+    /**
+     * @return void
+     */
     public function testAPIBase() {
         $result = $this->api->index($this->auth_string);
 
@@ -70,10 +96,13 @@ class APITest extends TestCase {
         // Result MUST have the message attribute and the message must specify
         // the API version.
         $this->assertObjectHasAttribute('message', $result);
-        $expectedMsg = 'API version ' . Config::test_version;
+        $expectedMsg = 'API version ' . Config::testingVersion();
         $this->assertEquals($expectedMsg, $result->message);
     }
 
+    /**
+     * @return string
+     */
     public function testPostProfile() {
         $profile = array('external_id' => uniqid());
         $result = $this->api->postProfile($this->auth_string, $profile);
@@ -95,7 +124,7 @@ class APITest extends TestCase {
 
     /**
      * @depends testPostProfile
-     * @return mixed
+     * @return string
      */
     public function testGetProfiles() {
         $result = $this->api->getProfiles($this->auth_string);
@@ -123,6 +152,7 @@ class APITest extends TestCase {
 
     /**
      * @depends testGetProfiles
+     * @return string
      */
     public function testGetProfile() {
         $profile = func_get_args()[0];
@@ -146,6 +176,7 @@ class APITest extends TestCase {
 
     /**
      * @depends testGetProfile
+     * @return string
      */
     public function testPutProfile() {
         $profile = func_get_args()[0];
@@ -171,6 +202,7 @@ class APITest extends TestCase {
 
     /**
      * @depends testPutProfile
+     * @return void
      */
     public function testDeleteProfile() {
         $profile = func_get_args()[0];
@@ -191,6 +223,7 @@ class APITest extends TestCase {
 
     /**
      * @depends testDeleteProfile
+     * @return void
      */
     public function testGetStatements() {
         $result = $this->api->getStatements($this->auth_string);
@@ -216,6 +249,7 @@ class APITest extends TestCase {
 
     /**
      * @depends testGetStatements
+     * @return string
      */
     public function testGetInactionStatement() {
         // Create a profile and push it to the recommender system.
@@ -250,6 +284,7 @@ class APITest extends TestCase {
 
     /**
      * @depends testGetInactionStatement
+     * @return void
      */
     public function testGetInactionStatementFiltered() {
         $profile = func_get_args()[0];
@@ -280,6 +315,9 @@ class APITest extends TestCase {
         $this->api->deleteProfile($this->auth_string, $profile);
     }
 
+    /**
+     * @return mixed
+     */
     public function testPostReaction() {
         // Create a profile and push it to the recommender system.
         $profileData = array('external_id' => uniqid());
@@ -321,6 +359,7 @@ class APITest extends TestCase {
 
     /**
      * @depends testPostReaction
+     * @return mixed
      */
     public function testGetReactions() {
         $args = func_get_args()[0];
@@ -350,6 +389,7 @@ class APITest extends TestCase {
 
     /**
      * @depends testGetReactions
+     * @return mixed
      */
     public function testGetReaction() {
         $args = func_get_args()[0];
@@ -382,6 +422,7 @@ class APITest extends TestCase {
 
     /**
      * @depends testGetReaction
+     * @return mixed
      */
     public function testPutReaction() {
         $args = func_get_args()[0];
@@ -421,6 +462,7 @@ class APITest extends TestCase {
 
     /**
      * @depends testPutReaction
+     * @return void
      */
     public function testDeleteReaction() {
         $args = func_get_args()[0];
@@ -442,6 +484,9 @@ class APITest extends TestCase {
         $this->api->deleteProfile($this->auth_string, $args[0]);
     }
 
+    /**
+     * @return void
+     */
     public function testGetMatches() {
         // Declare storage variables for generated entities.
         // These will be used to delete them after the test.

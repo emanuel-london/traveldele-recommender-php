@@ -1,12 +1,29 @@
 <?php
+/**
+ * OAuth2Client.php
+ */
 
 namespace Kooyara\RecommenderSystem;
 
+/**
+ * Class OAuth2Client
+ * @package Kooyara\RecommenderSystem
+ */
 class OAuth2Client
 {
+    /**
+     * @var string
+     */
     private $client_id;
+
+    /**
+     * @var string
+     */
     private $client_secret;
 
+    /**
+     * @var CurlClient
+     */
     private $curl_client;
 
     /**
@@ -22,11 +39,15 @@ class OAuth2Client
     }
 
     /**
+     * Fetch an access token from the OAuth2 server.
+     *
      * @param string $tokenURL
      * @param string $grantType
-     * @return mixed
+     *
+     * @return Token
      */
-    public function fetchToken(string $tokenURL, string $grantType) {
+    public function fetchToken(string $tokenURL, string $grantType)
+    {
         $data = array(
             'client_id' => $this->client_id,
             'client_secret' => $this->client_secret,

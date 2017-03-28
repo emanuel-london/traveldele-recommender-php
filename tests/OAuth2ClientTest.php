@@ -1,24 +1,32 @@
 <?php
+/**
+ * OAuth2ClientTest.php
+ */
 
 use PHPUnit\Framework\TestCase;
 use Kooyara\RecommenderSystem\Config;
 use Kooyara\RecommenderSystem\OAuth2Client;
 
+/**
+ * Class OAuth2ClientTest
+ */
 class OAuth2ClientTest extends TestCase {
+
+    /**
+     * Confirm that the fetchToken() method of OAuth2Client works as expected.
+     *
+     * @return void
+     */
     public function testFetchToken() {
         $oauth_client = new OAuth2Client(
-            Config::test_client_id,
-            Config::test_client_secret
+            Config::testingClientId(),
+            Config::testingClientSecret()
         );
 
-        $token_url = sprintf(
-            "%s://%s/%s",
-            Config::test_protocol,
-            Config::test_host,
-            Config::access_token_url
-        );
+        $token_url =  Config::testingProtocol() . '://'
+            . Config::testingHost() . '/' . Config::$access_token_url;
 
-        $result = $oauth_client->fetchToken($token_url, Config::grant_type);
+        $result = $oauth_client->fetchToken($token_url, Config::$grant_type);
 
         // Result MUST be an object.
         $this->assertInternalType("object", $result);

@@ -10,24 +10,26 @@ use Kooyara\RecommenderSystem\RecommenderSystem;
 class RecommenderSystemTest extends TestCase {
 
     /**
-     * @var recommender system.
+     * @var RecommenderSystem
      */
     protected $rs;
 
     /**
+     * Reset the recommender system object before every test run.
      *
+     * @return void
      */
     protected function setUp()
     {
         $this->rs = new RecommenderSystem(
             'testing',
-            Config::test_client_id,
-            Config::test_client_secret
+            Config::testingClientId(),
+            Config::testingClientSecret()
         );
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function testPostProfile() {
         $profile = array('external_id' => uniqid());
@@ -50,7 +52,7 @@ class RecommenderSystemTest extends TestCase {
 
     /**
      * @depends testPostProfile
-     * @return mixed
+     * @return string
      */
     public function testGetProfiles() {
         $result = $this->rs->getProfiles();
@@ -78,6 +80,7 @@ class RecommenderSystemTest extends TestCase {
 
     /**
      * @depends testGetProfiles
+     * @return string
      */
     public function testGetProfile() {
         $profile = func_get_args()[0];
@@ -101,6 +104,7 @@ class RecommenderSystemTest extends TestCase {
 
     /**
      * @depends testGetProfile
+     * @return string
      */
     public function testPutProfile() {
         $profile = func_get_args()[0];
@@ -126,6 +130,7 @@ class RecommenderSystemTest extends TestCase {
 
     /**
      * @depends testPutProfile
+     * @return void
      */
     public function testDeleteProfile() {
         $profile = func_get_args()[0];
@@ -146,6 +151,7 @@ class RecommenderSystemTest extends TestCase {
 
     /**
      * @depends testDeleteProfile
+     * @return void
      */
     public function testGetStatements() {
         $result = $this->rs->getStatements();
@@ -171,19 +177,18 @@ class RecommenderSystemTest extends TestCase {
 
     /**
      * @depends testGetStatements
+     * @return string
      */
     public function testGetInactionStatement() {
         // Create a profile and push it to the recommender system.
         $profileData = array('external_id' => uniqid());
         $profile = $this->rs->postProfile(
-                        $profileData
+            $profileData
         )->result->inserted_id;
 
         // Get an arbitrary statement for which the profile has no recorded
         // reaction.
-        $result = $this->rs->getInactionStatement(
-                        $profile
-        );
+        $result = $this->rs->getInactionStatement($profile);
 
         // Result MUST be an object.
         $this->assertInternalType('object', $result);
@@ -203,6 +208,7 @@ class RecommenderSystemTest extends TestCase {
 
     /**
      * @depends testGetInactionStatement
+     * @return void
      */
     public function testGetInactionStatementFiltered() {
         $profile = func_get_args()[0];
@@ -210,10 +216,7 @@ class RecommenderSystemTest extends TestCase {
         // Get an arbitrary statement for which the profile has no recorded
         // reaction, filtered by a tag value.
         $filter = array('tags' => array('test'));
-        $result = $this->rs->getInactionStatement(
-                        $profile,
-            $filter
-        );
+        $result = $this->rs->getInactionStatement($profile, $filter);
 
         // Result MUST be an object.
         $this->assertInternalType('object', $result);
@@ -233,19 +236,19 @@ class RecommenderSystemTest extends TestCase {
     }
 
     /**
-     * @return array
+     * @return mixed
      */
     public function testPostReaction() {
         // Create a profile and push it to the recommender system.
         $profileData = array('external_id' => uniqid());
         $profile = $this->rs->postProfile(
-                        $profileData
+            $profileData
         )->result->inserted_id;
 
         // Get an arbitrary statement for which the profile has no recorded
         // reaction.
         $statement = $this->rs->getInactionStatement(
-                        $profile
+            $profile
         )->result->_id;
 
         // Post a random reaction (on a scale of 1 to 5) for the retrieved
@@ -274,6 +277,7 @@ class RecommenderSystemTest extends TestCase {
 
     /**
      * @depends testPostReaction
+     * @return mixed
      */
     public function testGetReactions() {
         $args = func_get_args()[0];
@@ -303,6 +307,7 @@ class RecommenderSystemTest extends TestCase {
 
     /**
      * @depends testGetReactions
+     * @return mixed
      */
     public function testGetReaction() {
         $args = func_get_args()[0];
@@ -335,6 +340,7 @@ class RecommenderSystemTest extends TestCase {
 
     /**
      * @depends testGetReaction
+     * @return mixed
      */
     public function testPutReaction() {
         $args = func_get_args()[0];
@@ -364,7 +370,7 @@ class RecommenderSystemTest extends TestCase {
         // Retrieve the updated reaction from the recommender system and check
         // that the reaction value matches the local value that was generated.
         $reaction = $this->rs->getReaction(
-                        $reactionId
+            $reactionId
         )->result;
         $this->assertEquals($value, $reaction->reaction);
 
@@ -373,6 +379,7 @@ class RecommenderSystemTest extends TestCase {
 
     /**
      * @depends testPutReaction
+     * @return void
      */
     public function testDeleteReaction() {
         $args = func_get_args()[0];
@@ -395,7 +402,7 @@ class RecommenderSystemTest extends TestCase {
     }
 
     /**
-     *
+     * @return void
      */
     public function testGetMatches() {
         // Declare storage variables for generated entities.
@@ -406,42 +413,38 @@ class RecommenderSystemTest extends TestCase {
         // Create two profiles.
         $profileOneData = array('external_id' => uniqid());
         $profileOne = $this->rs->postProfile(
-                        $profileOneData
+            $profileOneData
         )->result->inserted_id;
         $profiles[] = $profileOne;
 
         $profileTwoData = array('external_id' => uniqid());
         $profileTwo = $this->rs->postProfile(
-                        $profileTwoData
+            $profileTwoData
         )->result->inserted_id;
         $profiles[] = $profileTwo;
 
         // Generate random reactions to 25 statements for each profile.
         for ($i = 0; $i < 25; $i++) {
             $inactionOne = $this->rs->getInactionStatement(
-                                $profileOne
+                $profileOne
             )->result->_id;
             $randOne = rand(1, 5);
-            $reactionOne = $this->rs->postReaction(
-                                array(
-                    'profile' => $profileOne,
-                    'statement' => $inactionOne,
-                    'reaction' => $randOne
-                )
-            )->result->inserted_id;
+            $reactionOne = $this->rs->postReaction(array(
+                'profile' => $profileOne,
+                'statement' => $inactionOne,
+                'reaction' => $randOne
+            ))->result->inserted_id;
             $reactions[] = $reactionOne;
 
             $inactionTwo = $this->rs->getInactionStatement(
-                                $profileTwo
+                $profileTwo
             )->result->_id;
             $randTwo = rand(1, 5);
-            $reactionTwo = $this->rs->postReaction(
-                                array(
-                    'profile' => $profileTwo,
-                    'statement' => $inactionTwo,
-                    'reaction' => $randTwo
-                )
-            )->result->inserted_id;
+            $reactionTwo = $this->rs->postReaction(array(
+                'profile' => $profileTwo,
+                'statement' => $inactionTwo,
+                'reaction' => $randTwo
+            ))->result->inserted_id;
             $reactions[] = $reactionTwo;
         }
 

@@ -7,7 +7,7 @@
         <target>./docs</target>
     </transformer>
     <files>
-        <file>./src/RecommenderSystem.php</file>
+        <directory>./src</directory>
     </files>
     <plugins>
         <plugin path="Core" />

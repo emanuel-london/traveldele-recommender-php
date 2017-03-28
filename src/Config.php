@@ -1,26 +1,119 @@
 <?php
+/**
+ * Config.php
+ */
 
 namespace Kooyara\RecommenderSystem;
 
+/**
+ * Environment variable prefix for reading package config from
+ * the system.
+ */
+define('ENV_PREFIX', 'KOOYARA_SDK_');
 
+/**
+ * Class Config
+ * @package Kooyara\RecommenderSystem
+ */
 class Config
 {
-    const api_version = '1.0';
 
-    const test_protocol = 'http';
-    const test_host = '127.0.0.1:5000';
-    const test_version = '1.0';
-    const test_client_id = 'X58P5YzMtBjbdq6';
-    const test_client_secret = 'J2bR70oykhNnkFq5xbrha27dfBo7I5';
+    /**
+     * @var string
+     */
+    public static $access_token_url = 'oauth/token';
 
-    const development_protocol = 'http';
-    const development_host = 'rs-dev.kooyara.com';
-    const development_version = '1.0';
+    /**
+     * @var string
+     */
+    public static $grant_type = 'client_credentials';
 
-    const production_host = 'rs.kooyara.com';
-    const production_protocol = 'https';
-    const production_version = '1.0';
+    /**
+     * @return string
+     */
+    public static function testingProtocol()
+    {
+        return getenv(ENV_PREFIX . 'TEST_PROTOCOL') ?: 'http';
+    }
 
-    const access_token_url = 'oauth/token';
-    const grant_type = 'client_credentials';
+    /**
+     * @return string
+     */
+    public static function testingHost()
+    {
+        return getenv(ENV_PREFIX . 'TEST_HOST') ?: '127.0.0.1:5000';
+    }
+
+    /**
+     * @return string
+     */
+    public static function testingVersion()
+    {
+        return getenv(ENV_PREFIX . 'TEST_VERSION') ?: '1.0';
+    }
+
+    /**
+     * @return string|false
+     */
+    public static function testingClientId()
+    {
+        return getenv(ENV_PREFIX . 'TEST_CLIENT_ID');
+    }
+
+    /**
+     * @return string|false
+     */
+    public static function testingClientSecret()
+    {
+        return getenv(ENV_PREFIX . 'TEST_CLIENT_SECRET');
+    }
+
+
+    /**
+     * @return string
+     */
+    public static function developmentProtocol()
+    {
+        return getenv(ENV_PREFIX . 'DEV_PROTOCOL') ?: 'http';
+    }
+
+    /**
+     * @return string
+     */
+    public static function developmentHost()
+    {
+        return getenv(ENV_PREFIX . 'DEV_HOST') ?: 'rs-dev.kooyara.com';
+    }
+
+    /**
+     * @return string
+     */
+    public static function developmentVersion()
+    {
+        return getenv(ENV_PREFIX . 'DEV_VERSION') ?: '1.0';
+    }
+
+    /**
+     * @return string
+     */
+    public static function productionProtocol()
+    {
+        return getenv(ENV_PREFIX . 'PROD_PROTOCOL') ?: 'https';
+    }
+
+    /**
+     * @return string
+     */
+    public static function productionHost()
+    {
+        return getenv(ENV_PREFIX . 'PROD_HOST') ?: 'rs.kooyara.com';
+    }
+
+    /**
+     * @return string
+     */
+    public static function productionVersion()
+    {
+        return getenv(ENV_PREFIX . 'PROD_VERSION') ?: '1.0';
+    }
 }
