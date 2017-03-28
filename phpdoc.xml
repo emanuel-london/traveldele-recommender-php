@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdocumentor>
+    <parser>
+        <target>/tmp/kooyara</target>
+    </parser>
+    <transformer>
+        <target>./docs</target>
+    </transformer>
+    <files>
+        <file>./src/RecommenderSystem.php</file>
+    </files>
+    <plugins>
+        <plugin path="Core" />
+    </plugins>
+    <transformations>
+        <template name="new-black" />
+    </transformations>
+</phpdocumentor>

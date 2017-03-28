@@ -1,0 +1,22 @@
+{
+  "name": "kooyara/RecommenderSystem",
+  "description": "Recommender System SDK",
+  "license": "",
+  "keywords": ["kooyara"],
+  "authors": [
+    {
+      "name": "Sando George",
+      "email": "sando.csc@gmail.com"
+    }
+  ],
+  "require": {},
+  "require-dev": {
+    "phpunit/phpunit": "6.0.*",
+    "phpdocumentor/phpdocumentor": "2.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Kooyara\\RecommenderSystem\\": "src"
+    }
+  }
+}
