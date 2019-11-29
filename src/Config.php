@@ -82,7 +82,7 @@ class Config
      */
     public static function developmentHost()
     {
-        return getenv(ENV_PREFIX . 'DEV_HOST') ?: 'rs-dev.kooyara.com';
+        return getenv(ENV_PREFIX . 'DEV_HOST') ?: 'ec2-3-133-151-137.us-east-2.compute.amazonaws.com';
     }
 
     /**
@@ -106,7 +106,7 @@ class Config
      */
     public static function productionHost()
     {
-        return getenv(ENV_PREFIX . 'PROD_HOST') ?: 'rs.kooyara.com';
+        return getenv(ENV_PREFIX . 'PROD_HOST') ?: 'ec2-3-133-151-137.us-east-2.compute.amazonaws.com';
     }
 
     /**
