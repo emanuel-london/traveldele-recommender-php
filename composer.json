@@ -16,7 +16,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Kooyara\\RecommenderSystem\\": "src"
+      "Kooyara\\RecommenderSystem\\": "src/"
     }
   }
 }
